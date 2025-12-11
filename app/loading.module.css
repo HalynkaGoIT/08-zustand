@@ -1,0 +1,46 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  flex-direction: column;
+  background: var(--background, #f9fafb);
+  color: var(--text, #111827);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  border: 6px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #2563eb;
+  /* синій акцент */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.text {
+  margin-top: 16px;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: inherit;
+  opacity: 0.85;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
