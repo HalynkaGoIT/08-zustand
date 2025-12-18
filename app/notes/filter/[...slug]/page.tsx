@@ -38,8 +38,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const url =
     tag === "All"
-      ? "https://notehub.com/notes/filter"
-      : `https://notehub.com/notes/filter/${tag}`;
+      ? "https://08-zustand-murex-two.vercel.app/notes/filter"
+      : `https://08-zustand-murex-two.vercel.app/notes/filter/${tag}`;
 
   return {
     title,
