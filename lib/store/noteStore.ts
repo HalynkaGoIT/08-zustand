@@ -1,14 +1,14 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { createNoteProps } from "../api";
+import { persist, createJSONStorage } from "zustand/middleware";
+import type { CreateNoteRequest } from "@/types/note";
 
 interface NoteDraftStore {
-  draft: createNoteProps;
-  setDraft: (note: createNoteProps) => void;
+  draft: CreateNoteRequest;
+  setDraft: (note: CreateNoteRequest) => void;
   clearDraft: () => void;
 }
 
-const initialDraftState: createNoteProps = {
+export const initialDraft: CreateNoteRequest = {
   title: "",
   content: "",
   tag: "Todo",
@@ -17,12 +17,13 @@ const initialDraftState: createNoteProps = {
 export const useNoteDraftStore = create<NoteDraftStore>()(
   persist(
     (set) => ({
-      draft: initialDraftState,
-      setDraft: (note) => set(() => ({ draft: note })),
-      clearDraft: () => set(() => ({ draft: initialDraftState })),
+      draft: initialDraft,
+      setDraft: (note) => set({ draft: note }),
+      clearDraft: () => set({ draft: initialDraft }),
     }),
     {
       name: "note-draft-storage",
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ draft: state.draft }),
     }
   )
