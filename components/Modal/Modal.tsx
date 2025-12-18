@@ -35,6 +35,7 @@ const Modal = ({ children, onClose }: ModalProps) => {
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
+      aria-label="Modal window"
     >
       <div className={css.modal}>{children}</div>
     </div>,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import css from "./page.module.css";
 import { useDebounce } from "use-debounce";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -8,24 +8,31 @@ import { fetchNotes } from "@/lib/api";
 import toast, { Toaster } from "react-hot-toast";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Pagination from "@/components/Pagination/Pagination";
-import Modal from "@/components/Modal/Modal";
-import NoteForm from "@/components/NoteForm/NoteForm";
 import NoteList from "@/components/NoteList/NoteList";
+import Link from "next/link";
+import type { NoteTag } from "@/types/note";
 
-const NoteClient = ({ tag }: { tag?: string }) => {
+type Props = {
+  tag?: NoteTag | "All";
+};
+
+const NoteClient = ({ tag }: Props) => {
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState<string>("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 400);
 
+  const normalizedTag = useMemo(() => {
+    return tag && tag !== "All" ? tag : undefined;
+  }, [tag]);
+
   const { data, isSuccess } = useQuery({
-    queryKey: ["notes", page, debouncedSearch, tag],
+    queryKey: ["notes", page, debouncedSearch, normalizedTag],
     queryFn: () =>
       fetchNotes({
         page,
-        perPage: 12,
+        perPage: 9,
         search: debouncedSearch,
-        tag,
+        tag: normalizedTag,
       }),
     placeholderData: keepPreviousData,
   });
@@ -38,42 +45,38 @@ const NoteClient = ({ tag }: { tag?: string }) => {
   const notesArr = data?.notes ?? [];
   const totalPages = data?.totalPages ?? 1;
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
   const handlePageChange = (selected: number) => {
     setPage(selected);
   };
 
   useEffect(() => {
-    if (data && notesArr.length === 0) {
+    if (isSuccess && notesArr.length === 0) {
       toast.error("No notes found for your request");
     }
-  }, [data, notesArr.length, isSuccess, debouncedSearch]);
+  }, [isSuccess, notesArr.length]);
 
   return (
     <div className={css.app}>
       {isSuccess && (
         <div className={css.toolbar}>
           <SearchBox value={search} onChange={handleChange} />
-          {isSuccess && totalPages > 1 && (
+
+          {totalPages > 1 && (
             <Pagination
               totalPages={totalPages}
               currentPage={page}
               onPageChange={handlePageChange}
             />
           )}
-          <button className={css.button} onClick={() => setIsModalOpen(true)}>
+
+          <Link href="/notes/action/create" className={css.button}>
             Create note +
-          </button>
+          </Link>
         </div>
       )}
-      {isModalOpen && (
-        <Modal onClose={handleModalClose}>
-          <NoteForm onClose={handleModalClose} />
-        </Modal>
-      )}
-      {data && notesArr.length !== 0 && <NoteList notes={notesArr} />}
+
+      {notesArr.length !== 0 && <NoteList notes={notesArr} />}
+
       <Toaster />
     </div>
   );
