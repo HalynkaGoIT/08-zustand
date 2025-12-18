@@ -4,6 +4,12 @@ import type { Note, CreateNoteRequest, NoteTag } from "../types/note";
 const BASE_URL = "https://notehub-public.goit.study/api";
 const myToken = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
+export interface createNoteProps {
+  title: string;
+  content: string;
+  tag: string;
+}
+
 export interface FetchNotesParams {
   page?: number;
   perPage?: number;
