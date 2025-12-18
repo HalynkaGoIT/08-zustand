@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import NotFoundClient from "./not-found.client";
 
@@ -23,5 +22,3 @@ export const metadata: Metadata = {
 export default function NotFoundPage() {
   return <NotFoundClient />;
 }
-
-

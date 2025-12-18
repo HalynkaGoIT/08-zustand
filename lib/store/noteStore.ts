@@ -25,6 +25,6 @@ export const useNoteDraftStore = create<NoteDraftStore>()(
       name: "note-draft-storage",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ draft: state.draft }),
-    }
-  )
+    },
+  ),
 );

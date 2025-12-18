@@ -17,7 +17,7 @@ const NoteForm = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     setDraft({ ...draft, [e.target.name]: e.target.value });
   };
