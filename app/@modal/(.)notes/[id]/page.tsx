@@ -10,8 +10,9 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-const NoteDetails = async ({ params }: Props) => {
+export default async function NoteDetails({ params }: Props) {
   const { id } = await params;
+
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
@@ -21,9 +22,7 @@ const NoteDetails = async ({ params }: Props) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NotePreview />
+      <NotePreview id={id} />
     </HydrationBoundary>
   );
-};
-
-export default NoteDetails;
+}
