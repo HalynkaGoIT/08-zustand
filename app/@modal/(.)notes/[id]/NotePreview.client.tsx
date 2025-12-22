@@ -2,34 +2,39 @@
 
 import { useRouter } from "next/navigation";
 import css from "./NotePreview.module.css";
-import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
 import style from "@/app/loading.module.css";
 import Modal from "@/components/Modal/Modal";
 
-const NotePreview = () => {
+type Props = {
+  id: string;
+};
+
+const NotePreview = ({ id }: Props) => {
   const router = useRouter();
   const close = () => router.back();
-  const { id } = useParams<{ id: string }>();
 
   const {
     data: note,
     isLoading,
-    error,
+    isError,
   } = useQuery({
     queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
-    refetchOnMount: false,
+    enabled: Boolean(id),
+    staleTime: 60_000,
   });
 
   if (isLoading) {
     return <p className={style.text}>Loading, please wait...</p>;
   }
 
-  if (error || !note) {
-    return <p>Something went wrong.</p>;
+  if (isError || !note) {
+    return <p className={style.text}>Something went wrong.</p>;
   }
+
+  const createdAt = new Date(note.createdAt).toLocaleString("uk-UA");
 
   return (
     <Modal onClose={close}>
@@ -38,8 +43,10 @@ const NotePreview = () => {
           <div className={css.header}>
             <h2>{note.title}</h2>
           </div>
+
           <p className={css.content}>{note.content}</p>
-          <p className={css.date}>{note.createdAt}</p>
+          <p className={css.date}>{createdAt}</p>
+
           <button className={css.backBtn} type="button" onClick={close}>
             Back
           </button>
